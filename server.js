@@ -2,8 +2,7 @@
 require.paths.unshift('vendor');
 
 // get required modules
-var fs = require('fs'),
-  express = require('express'),
+var express = require('express'),
   mongoose = require('mongoose'),
   stylus = require('stylus'),
   mongostore = require('connect-mongodb'),
@@ -15,6 +14,11 @@ var fs = require('fs'),
 
 // include authentication helpers
 auth = require('./auth').AuthHelper;
+
+// include commonjs-utils and extensions
+json = require('commonjs-utils/lib/json-ext');
+base64 = require('commonjs-utils/lib/base64');
+date = require('./date-ext');
 
 // create server object
 app = exports.module = express.createServer();
@@ -35,6 +39,7 @@ function compile(str, path, fn) {
 app.configure('development', function(){
   app.set('connstring', 'mongodb://localhost/chat-dev');
   app.set('port', 3000);
+  app.set('disableAuthentication', true);
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 

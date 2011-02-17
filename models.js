@@ -3,12 +3,7 @@ var crypto = require('crypto');
 function defineModels(mongoose, fn) {
   var Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
-  
-  var monthNames = [ 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli',
-                     'August', 'September', 'Oktober', 'November', 'Dezember' ];
-  var monthNamesShort = [ 'Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul',
-                          'Aug', 'Sep', 'Okt', 'Nov', 'Dez' ];
-   
+     
   /**
    * User model
    * 
@@ -29,10 +24,7 @@ function defineModels(mongoose, fn) {
   
   User.virtual('lastseendate')
     .get(function() {
-      var year = this.lastseen.getFullYear();
-      var month = monthNames[this.lastseen.getMonth()];
-      var day = this.lastseen.getDate();      
-      return (day < 10 ? '0' + day : day) + '. ' + month + ' ' + year;
+      return date.toReadableDate(this.lastseen, 'datestamp');
     });
   
   User.virtual('id')
@@ -81,10 +73,7 @@ function defineModels(mongoose, fn) {
   
   Message.virtual('posteddate')
     .get(function() {
-      var year = this.posted.getFullYear();
-      var month = monthNames[this.posted.getMonth()];
-      var day = this.posted.getDate();      
-      return (day < 10 ? '0' + day : day) + '. ' + month + ' ' + year;
+      return date.toReadableDate(this.posted, 'datestamp');
     });
   
   /**

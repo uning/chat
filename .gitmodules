@@ -1,3 +1,6 @@
 [submodule "vendor/socket.io"]
 	path = vendor/socket.io
 	url = git://github.com/LearnBoost/Socket.IO-node.git
+[submodule "vendor/commonjs-utils"]
+	path = vendor/commonjs-utils
+	url = git://github.com/kriszyp/commonjs-utils.git
