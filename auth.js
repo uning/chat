@@ -10,7 +10,7 @@ exports.AuthHelper = {
     var cookie = JSON.parse(req.cookies.logintoken);
     LoginToken.findOne({ email: cookie.email, token: cookie.token, series: cookie.series }, function(err, token) {
       if (!token) {
-        res.redirect('/login');
+        res.redirect('/');
         return;
       }
   
@@ -48,13 +48,13 @@ exports.AuthHelper = {
             req.currentUser = user;
             next();
           } else {
-            res.redirect('/login');
+            res.redirect('/');
           }
         });
       } else if (req.cookies.logintoken) {
         authFromLoginToken(req, res, next);
       } else {
-        res.redirect('/login');
+        res.redirect('/');
       }
     }
   }

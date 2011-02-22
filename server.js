@@ -7,10 +7,7 @@ var express = require('express'),
   stylus = require('stylus'),
   mongostore = require('connect-mongodb'),
   models = require('./models'),
-  db,
-  Message,
-  User,
-  LoginToken;
+  db;
 
 // include authentication helpers
 auth = require('./auth').AuthHelper;

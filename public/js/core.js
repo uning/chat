@@ -32,6 +32,7 @@
           var msg = this.value;
           // send message to server
           var jsonMsg = {
+                action: 'SEND',
                 body: msg,
                 name: name.val()
               };

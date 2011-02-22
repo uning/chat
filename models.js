@@ -13,7 +13,7 @@ function defineModels(mongoose, fn) {
     return value && value.length;
   }
   
-  User = new Schema({
+  var User = new Schema({
     email: String,
     name: String,
     lastseen: Date,
@@ -65,7 +65,7 @@ function defineModels(mongoose, fn) {
    * 
    * Used for persisting chat messages
    */
-  Message = new Schema({
+  var Message = new Schema({
     posted: Date,
     user: ObjectId,
     message: String
@@ -81,7 +81,7 @@ function defineModels(mongoose, fn) {
    * 
    * Used for persisting session tokens
    */
-  LoginToken = new Schema({
+  var LoginToken = new Schema({
     email: { type: String, index: true },
     series: { type: String, index: true },
     token: { type: String, index: true }
