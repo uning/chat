@@ -1,5 +1,6 @@
 // fix up paths
 require.paths.unshift('vendor');
+require.paths.unshift('vendor/jade/lib');
 
 // get required modules
 var express = require('express'),
