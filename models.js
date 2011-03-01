@@ -14,7 +14,7 @@ function defineModels(mongoose, fn) {
   }
   
   var User = new Schema({
-    email: String,
+    email: { type: String, validate: [validatePresenceOf, 'Email address required'], index: { unique: true } },
     name: String,
     lastseen: Date,
     isonline: Boolean,
@@ -53,12 +53,21 @@ function defineModels(mongoose, fn) {
   });
   
   User.pre('save', function(next) {
-    if (!validatePresenceOf(this.password)) {
-      next(new Error('Ungueltiges Passwort'));
+    if (!validatePresenceOf(this.hashed_password)) {
+      next(new Error('Invalid password'));
     } else {
       next();
     }
   });
+  
+  //register validators
+  User.path('email').validate(function(val) {
+    return val.length > 0;
+  }, 'EMAIL_MISSING');
+  
+  User.path('name').validate(function(val) {
+    return val.length > 0;
+  }, 'NAME_MISSING');
   
   /**
    * Message model

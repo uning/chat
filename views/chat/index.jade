@@ -1,5 +1,14 @@
-#chatwindow
-  ul#chat-messages
-#chatline
-  input.chat-name(name='name', size=30)
-  input.chat-message(name='message', size=100)
+#chat-interface
+  #chatwindow
+    ul#chat-messages
+    #chatusers(style='display:none')
+      span.title
+        | Users logged in:
+      ul.user-list
+  #chatline
+    input(type='hidden', name='username', value=user.name)
+    input(type='hidden', name='userid', value=user.id)
+    span.name
+      #{user.name}:
+    input.chat-message.disabled(name='message', disabled='disabled')
+    span.connection-state

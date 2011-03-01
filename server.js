@@ -37,7 +37,6 @@ function compile(str, path, fn) {
 app.configure('development', function(){
   app.set('connstring', 'mongodb://localhost/chat-dev');
   app.set('port', 3000);
-  app.set('disableAuthentication', true);
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
