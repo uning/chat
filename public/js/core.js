@@ -121,9 +121,9 @@
           if (msg.substr(0,1) == "/") {
             // send command to server
             var jsonMsg = {
-                action: 'COMMAND',
-                cmd: msg.substr(1, msg.length - 1)
-              };
+                  action: 'COMMAND',
+                  cmd: msg.substr(1, msg.length - 1)
+                };
           } else {
             // send message to server
             var jsonMsg = {

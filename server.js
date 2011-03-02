@@ -36,12 +36,12 @@ function compile(str, path, fn) {
 //configure environments
 app.configure('development', function(){
   app.set('connstring', 'mongodb://localhost/chat-dev');
-  app.set('port', 3000);
+  app.set('port', 9002);
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
-  app.set('port', 80);
+  app.set('port', 3002);
   app.set('connstring', 'mongodb://localhost/chat');
   app.use(express.errorHandler()); 
 });
