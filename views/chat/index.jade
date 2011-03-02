@@ -8,6 +8,7 @@
   #chatline
     input(type='hidden', name='username', value=user.name)
     input(type='hidden', name='userid', value=user.id)
+    input#chat-server(type='hidden', value=host)
     span.name
       #{user.name}:
     input.chat-message.disabled(name='message', disabled='disabled')

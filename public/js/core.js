@@ -44,7 +44,7 @@
       // set connection state
       $('.connection-state').html('Connecting to chat server...');
       // open up chat socket
-      socket = new io.Socket('localhost');
+      socket = new io.Socket($('#chat-server').val());
       socket.connect();
             
       socket.on('connect', function(){

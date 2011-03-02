@@ -37,12 +37,14 @@ function compile(str, path, fn) {
 app.configure('development', function(){
   app.set('connstring', 'mongodb://localhost/chat-dev');
   app.set('port', 9002);
+  app.set('host', 'localhost');
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
   app.set('port', 3002);
   app.set('connstring', 'mongodb://localhost/chat');
+  app.set('host', 'chat.schaermu.ch');
   app.use(express.errorHandler()); 
 });
 
