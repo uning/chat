@@ -6,7 +6,7 @@ require.paths.unshift('vendor/jade/lib');
 var express = require('express'),
   mongoose = require('mongoose'),
   stylus = require('stylus'),
-  mongostore = require('connect-mongodb'),
+  //mongostore = require('connect-mongodb'),
   models = require('./models'),
   db;
 
@@ -57,15 +57,17 @@ app.configure(function(){
   app.use(stylus.middleware(
     { src: __dirname + '/stylus', dest: __dirname + '/public', compile: compile }
   ));
-  app.use(express.bodyDecoder());
-  app.use(express.cookieDecoder());
+  app.use(express.bodyParser());
+  app.use(express.cookieParser());
   // use connect-mongodb as session middleware
-  app.use(express.session({ store: mongostore(app.set('connstring')), secret: 'topsecret' }));
+  //app.use(express.session({ store: mongostore(app.set('connstring')), secret: 'topsecret' }));
+  // FIX: temporarily use in-memory session store (connect-mongodb middleware is broken as of 0.1.1)
+  app.use(express.session({ secret: 'topsecret' }));
   app.use(express.methodOverride());
   app.use(app.router);
   // use express logger
   app.use(express.logger({ format: '\x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms' }));
-  app.use(express.staticProvider(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public'));
 });
 
 //configure mongoose models
