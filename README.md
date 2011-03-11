@@ -1,8 +1,8 @@
 # node-chat - exploring socket.io
 ## Dependencies
-- node.js (tested using development branch, should run on stable release too)
+- node.js (>= 0.4.2)
 - mongoose (current stable, `npm install mongoose`)
 - express (current stable, `npm install express`)
-- connect-mongodb (current stable `npm install connect-mongodb`)
+- connect-mongo (current stable `npm install connect-mongo`)
 - jade (current stable, `npm install jade`)
 - stylus (current stable, `npm install stylus`)

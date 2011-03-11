@@ -4,6 +4,3 @@
 [submodule "vendor/commonjs-utils"]
 	path = vendor/commonjs-utils
 	url = git://github.com/kriszyp/commonjs-utils.git
-[submodule "vendor/jade"]
-	path = vendor/jade
-	url = https://schaermu@github.com/schaermu/jade.git

@@ -1,12 +1,11 @@
 // fix up paths
 require.paths.unshift('vendor');
-require.paths.unshift('vendor/jade/lib');
 
 // get required modules
 var express = require('express'),
   mongoose = require('mongoose'),
   stylus = require('stylus'),
-  //mongostore = require('connect-mongodb'),
+  MongoStore = require('connect-mongo'),
   models = require('./models'),
   db;
 
@@ -35,21 +34,24 @@ function compile(str, path, fn) {
 
 //configure environments
 app.configure('development', function(){
-  app.set('connstring', 'mongodb://localhost/chat-dev');
+  app.set('m_database', 'chat-dev');
+  app.set('m_host', 'localhost');
   app.set('port', 9002);
   app.set('host', 'localhost');
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
 });
 
 app.configure('production', function(){
+  app.set('m_database', 'chat');
+  app.set('m_host', 'localhost');
   app.set('port', 3002);
-  app.set('connstring', 'mongodb://localhost/chat');
   app.set('host', 'chat.schaermu.ch');
   app.use(express.errorHandler()); 
 });
 
 //configure server instance
 app.configure(function(){
+  app.set('connstring', 'mongodb://' + app.set('m_host') + '/' + app.set('m_database'));
   app.set('views', __dirname + '/views');
   // set jade as default view engine
   app.set('view engine', 'jade');
@@ -59,10 +61,11 @@ app.configure(function(){
   ));
   app.use(express.bodyParser());
   app.use(express.cookieParser());
-  // use connect-mongodb as session middleware
-  //app.use(express.session({ store: mongostore(app.set('connstring')), secret: 'topsecret' }));
-  // FIX: temporarily use in-memory session store (connect-mongodb middleware is broken as of 0.1.1)
-  app.use(express.session({ secret: 'topsecret' }));
+  // use connect-mongo as session middleware
+  app.use(express.session({
+    secret: 'topsecret',
+    store: new MongoStore({ db: app.set('m_database'), host: app.set('m_host') })
+  }));
   app.use(express.methodOverride());
   app.use(app.router);
   // use express logger
