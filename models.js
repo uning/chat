@@ -113,6 +113,7 @@ function defineModels(mongoose, fn) {
   LoginToken.pre('save', function(next) {
     this.token = this.randomToken();
     this.series = this.randomToken();
+    next();
   });
   
   // register mongoose models
