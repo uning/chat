@@ -2,8 +2,11 @@
 Little testing application to explore socket.io functionality.
 ## Installation / Startup
 `$ git clone git://github.com/schaermu/node-chat.git`
+
 `$ cd node-chat`
+
 `$ git submodule update --init`
+
 `$ node server.js`
 ## Dependencies
 - node.js (>= 0.4.2)
