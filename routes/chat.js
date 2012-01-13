@@ -1,28 +1,46 @@
-var sio = require('socket.io'),
-  uor = require('../useronline.registry').UserOnlineRegistry;
+
+
+
 
 app.get('/chat', auth.loadUser, function(req, res, next) {
   // render chat interface
   res.render('chat/index', { locals:
     {
-      user: req.currentUser,
-      host: app.set('host')
+      user: req.currentUser
     }
   });
 });
 
-var socket = sio.listen(app);
 
-socket.on('connection', function(client) {
-  client.on('message', function(m, c) {
+sio.sockets.on('connection', function(socket) {
+
+  if(!socket.handshake){
+	  console.log('no handleshake')
+	  socket.close();
+	  return;
+  }
+  if(!socket.handshake.userid){
+	  console.log('no userid')
+	  socket.close();
+	  return;
+  }
+  uor.addUser(socket.handshake.userid,socket.handshake.username,2,socket);
+  console.log('connection:',socket.handshake.username,socket.handshake.userid)
+
+  //加载处理器
+  //socket.emit('eventnme',param) 产生事件
+  //socket.send(message) 产生message,可以为json object 或字符串
+
+
+  socket.on('message', function(m, c) {
     // parse message
-    var msg = json.parse(m);
-    
+	  console.log('message:',m,socket.handshake.userid)
+    socket.broadcast.send(m);//just
+	/*
     switch (msg.action) {
       case 'SIGNIN':
         // set user as connected and add it to the loggedInUsers hash
-        uor.addUser(msg.name, msg.userid, client.sessionId);
-
+        uor.addUser(msg.name, msg.userid, socket.sessionId);
         User.findById(msg.userid, function(err, user) {
           if (!user)
             return;
@@ -34,7 +52,7 @@ socket.on('connection', function(client) {
                   action: 'USERS',
                   currentUsers: uor.getCurrent()
               };
-              socket.broadcast(json.stringify(bCast));
+              socket.broadcast.send(json.stringify(bCast));
             });
           }
         });
@@ -42,15 +60,15 @@ socket.on('connection', function(client) {
       case 'COMMAND':
         switch (msg.cmd) {
           case 'afk':
-            if (uor.getState(client.sessionId) == 1)
-              uor.setState(client.sessionId, 0);
+            if (uor.getState(socket.sessionId) == 1)
+              uor.setState(socket.sessionId, 0);
             else
-              uor.setState(client.sessionId, 1);
+              uor.setState(socket.sessionId, 1);
             var bCast = {
               action: 'USERS',
               currentUsers: uor.getCurrent()
             };
-            socket.broadcast(json.stringify(bCast));
+            socket.broadcast.send(json.stringify(bCast));
             break;
           case 'msg':
             
@@ -66,22 +84,27 @@ socket.on('connection', function(client) {
           name: msg.name
         };
     
-        // send to all clients
-        socket.broadcast(json.stringify(broadCast));
+        // send to all sockets
+        socket.broadcast.send(json.stringify(broadCast));
         break;
     }
+	*/
   });
   
-  client.on('disconnect', function(c) {
-    var registredUser = uor.getBySessionId(client.sessionId);
+  socket.on('disconnect', function(c) {
+	  uor.removeUser(socket.handshake.userid);
+	  console.log('disconnect:',c,socket.handshake.userid)
+	  /*
+    var registredUser = uor.getBySessionId(socket.sessionId);
+	if(!registredUser)
+		return;
     User.findById(registredUser.id, function(err, user) {
       if (!user)
         return;
-      else {
         user.lastseen = new Date();
-        user.isonline = true;
+        user.isonline = false;
         user.save(function(err) {
-          uor.removeUser(client.sessionId);
+          uor.removeUser(socket.sessionId);
           
           var bCast = {
               action: 'USERS',
@@ -89,7 +112,11 @@ socket.on('connection', function(client) {
           };
           socket.broadcast(json.stringify(bCast));
         });
-      }
     });
+	*/
   });
+
+
+	//处理系统通知
+	socket.emit('welcome', { hello: 'world' });
 });

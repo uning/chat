@@ -1,5 +1,12 @@
+
 // login form route
 app.get('/', function(req, res) {
+  if (req.session) {
+		if(req.session.user_id){
+		  res.redirect('/chat');
+		  return;
+		}
+  }
   res.render('user/login', {
     locals: {
       user: new User()
@@ -14,13 +21,16 @@ app.post('/', function(req, res) {
       req.session.user_id = user.id;
       
       if (req.body.remember_me) {
-        var loginToken = new LoginToken({ email: user.email });
-        loginToken.save(function() {
-          res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+        var token = new LoginToken({ email: user.email });
+          token.save(function() {
+          res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+		  console.log('login',token,token.cookieValue)
+		  res.redirect('/chat');
         });
-      }
+      }else{
+		  res.redirect('/chat');
+	  }
       
-      res.redirect('/chat');
     } else {
       req.flash('error', 'Login failed');
       res.redirect('/');
@@ -29,7 +39,7 @@ app.post('/', function(req, res) {
 });
 
 //logout user
-app.del('/', auth.loadUser, function(req, res) {
+app.get('/logout', auth.loadUser, function(req, res) {
   if (req.session) {
     LoginToken.remove({ email: req.currentUser.email }, function() {});
     res.clearCookie('logintoken');
@@ -86,7 +96,9 @@ app.post('/register', function(req, res) {
 
           nUser.save(function(err) {
             if (err) userSaveFailed();
+			req.session.user_id = nUser.id;
             req.flash('info', 'Registration successful');
+			
             res.redirect('/');
           });
         }

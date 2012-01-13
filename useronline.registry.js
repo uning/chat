@@ -1,34 +1,50 @@
 /**
  * UserOnlineRegistry class
  */
-
 exports.UserOnlineRegistry = {
   _currentUsers: {},
-  addUser: function(username, userid, sessionid) {
-    this._currentUsers[sessionid] = { n: username, id: userid, s: 0 };
+  _currentGroups: {}, //群
+  addUser: function(userid,username,state,socket) {
+	 state = state || 1;//1 handshaked 2 connected
+	 this._currentUsers[userid] = { n: username, id: userid, s: state,socket:socket };
   },
-  removeUser: function(sessionid) {
-    if (sessionid in this._currentUsers)
-      delete this._currentUsers[sessionid];
+  removeUser: function(userid) {
+    if (userid in this._currentUsers)
+      delete this._currentUsers[userid];
   },
-  setState: function(sessionid, state) {
-    if (sessionid in this._currentUsers) {
-      this._currentUsers[sessionid].s = state;
+  setState: function(userid, state) {
+    if (userid in this._currentUsers) {
+      this._currentUsers[userid].s = state;
     }
   },
-  getState: function(sessionid) {
-    if (sessionid in this._currentUsers) {
-      return this._currentUsers[sessionid].s;
+  getState: function(userid) {
+    if (userid in this._currentUsers) {
+      return this._currentUsers[userid].s;
     }
   },
-  getCurrent: function() {
-    var ret = {};
-    for (var idx in this._currentUsers) {
-      ret[idx] = ({ name: this._currentUsers[idx].n, state: this._currentUsers[idx].s });
+  setSocket: function(userid, s) {
+    if (userid in this._currentUsers) {
+      this._currentUsers[userid].socket = s;
     }
-    return ret;
   },
-  getBySessionId: function(sessionid) {
-    return this._currentUsers[sessionid];
+
+  getSocket: function(userid) {
+    if (userid in this._currentUsers) {
+      return this._currentUsers[userid].socket;
+    }
+  },
+  getAll: function() {
+    return this._currentUsers
+  },
+  getUser: function(userid) {
+	  if (userid in this._currentUsers) {
+		  return this._currentUsers[userid];
+	  }
+  },
+  addGroup:function(userid,groupid){
+	  this._currentUsers[groupid] = this._currentUsers[groupid] || {};
+	  if (userid in this._currentUsers) {
+	    this._currentUsers[groupid][userid] = 1;
+	  }
   }
 };

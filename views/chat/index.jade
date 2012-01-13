@@ -8,8 +8,10 @@
   #chatline
     input(type='hidden', name='username', value=user.name)
     input(type='hidden', name='userid', value=user.id)
-    input#chat-server(type='hidden', value=host)
-    span.name
-      #{user.name}:
-    input.chat-message.disabled(name='message', disabled='disabled')
-    span.connection-state
+    input#chat-server(type='hidden', value='')
+    span To:
+    input.chat-message(name='touids',value='all',style='width:20%')
+    span Message:
+    input.chat-message.disabled(name='message',style='width:60%', disabled='disabled')
+    div
+     span.connection-state

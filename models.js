@@ -94,7 +94,7 @@ function defineModels(mongoose, fn) {
     email: { type: String, index: true },
     series: { type: String, index: true },
     token: { type: String, index: true }
-  });
+  },{strict:false});
   
   LoginToken.virtual('id')
     .get(function() {
@@ -113,6 +113,7 @@ function defineModels(mongoose, fn) {
   LoginToken.pre('save', function(next) {
     this.token = this.randomToken();
     this.series = this.randomToken();
+	this.notinshema ='aaddd'
     next();
   });
   

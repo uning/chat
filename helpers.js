@@ -3,7 +3,7 @@ exports.helpers = {
     return name + ' v' + version;
   },
   
-  appName: 'node-chat',
+  appName: 'chat-server',
   version: '0.1'
 };
 
