@@ -24,8 +24,12 @@ sio.sockets.on('connection', function(socket) {
 	  socket.close();
 	  return;
   }
-  uor.addUser(socket.handshake.userid,socket.handshake.username,2,socket);
+  user = uor.addUser(socket.handshake.userid,socket.handshake.username,2,socket);
+  user.lastseen = new Date();
   console.log('connection:',socket.handshake.username,socket.handshake.userid)
+
+ //处理系统通知
+  socket.emit('welcome', { hello: user.n});
 
   //加载处理器
   //socket.emit('eventnme',param) 产生事件
@@ -33,9 +37,24 @@ sio.sockets.on('connection', function(socket) {
 
 
   socket.on('message', function(m, c) {
+	user = uor.getUser(socket.handshake.userid);
+	console.log('message:',m,c,socket.handshake.userid)
+	if(!user){
+		console.log('iii!!! discard message ',m,socket.handshake.userid,'no user')
+		return ;
+	}
     // parse message
-	  console.log('message:',m,socket.handshake.userid)
+	var msg = m || {};
+	if(typeof m == 'string'){
+		try{
+			msg = json.parse(m)
+		}catch(e){
+			console.error('message from '+socket.handshake.username +'invalid ',m);
+			return;
+		}
+	}
     socket.broadcast.send(m);//just
+	//public static const MSG_WORLD:int = 1,MSG_QUN:int = 2,MSG_SYS:int = 3,MSG_NOTICE = 4,MSG_USER = 0;
 	/*
     switch (msg.action) {
       case 'SIGNIN':
@@ -94,6 +113,7 @@ sio.sockets.on('connection', function(socket) {
   socket.on('disconnect', function(c) {
 	  uor.removeUser(socket.handshake.userid);
 	  console.log('disconnect:',c,socket.handshake.userid)
+	  socket.broadcast.emit('offline',{userid:socket.handshake.userid});
 	  /*
     var registredUser = uor.getBySessionId(socket.sessionId);
 	if(!registredUser)
@@ -117,6 +137,4 @@ sio.sockets.on('connection', function(socket) {
   });
 
 
-	//处理系统通知
-	socket.emit('welcome', { hello: 'world' });
 });

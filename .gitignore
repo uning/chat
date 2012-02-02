@@ -2,3 +2,7 @@
 /.project
 /.monitor
 /nodemon-ignore
+*.sw*
+t
+t,*
+*.out

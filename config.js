@@ -3,11 +3,8 @@
 
 //process.env.NODE_ENV='development'
 app.configure('development', function(){
-  app.set('m_database', 'chat-dev');
-  app.set('m_host', 'localhost');
-  app.set('m_port', 35050);
 
-  app.set('sessionMongo',{ db: 'chat-dev', host:'localhost',port:35050 })
+  app.set('mongodb',{ db: 'test', host:'localhost',port:35050 })
   app.set('sessionRedis',{ host:'localhost',port:53000})
   //配置server,使用redis
   app.set('confserver', {host:'127.0.0.1',port:53006});
@@ -18,7 +15,7 @@ app.configure('development', function(){
 
 app.configure('production', function(){
   app.set('confserver', {host:'127.0.0.1',port:53006});
-  app.set('sessionMongo',{ db: 'chat-dev', host:'localhost',port:35050 })
+  app.set('mongodb',{ db: 'test', host:'localhost',port:35050 })
   app.set('sessionRedis',{ host:'localhost',port:53000})
 
   app.set('host', 'chat.playcrab.com');
@@ -44,7 +41,7 @@ sio.configure('development', function(){
 			heartbeat interval defaults to 20 seconds
 
 	*/
-	sio.set('heartbeat timeout',30);sio.set('heartbeat interval',40);
+	sio.set('heartbeat timeout',60);sio.set('heartbeat interval',80);
 });
 
 

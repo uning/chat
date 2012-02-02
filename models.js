@@ -14,13 +14,14 @@ function defineModels(mongoose, fn) {
   }
   
   var User = new Schema({
-    email: { type: String, validate: [validatePresenceOf, 'Email address required'], index: { unique: true } },
+    _id: { type: Schema.Types.Mixed ,/* */ unique:true },
+    email: { type: String, validate: [validatePresenceOf, 'Email address required'], index: true },
     name: String,
     lastseen: Date,
     isonline: Boolean,
     hashed_password: String,
     salt: String
-  });
+  },{strict:false});
   
   User.virtual('lastseendate')
     .get(function() {
@@ -29,7 +30,9 @@ function defineModels(mongoose, fn) {
   
   User.virtual('id')
     .get(function() {
-      return this._id.toHexString();
+		if(typeof this._id == 'object')
+			return this._id.toHexString();
+		return this._id
   });
   
   User.virtual('password')
@@ -113,13 +116,12 @@ function defineModels(mongoose, fn) {
   LoginToken.pre('save', function(next) {
     this.token = this.randomToken();
     this.series = this.randomToken();
-	this.notinshema ='aaddd'
     next();
   });
   
   // register mongoose models
   mongoose.model('Message', Message);
-  mongoose.model('User', User);
+  mongoose.model('User', User,'user');
   mongoose.model('LoginToken', LoginToken);
   fn();
 }

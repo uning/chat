@@ -1,31 +1,31 @@
 
 // login form route
-app.get('/', function(req, res) {
-  if (req.session) {
-		if(req.session.user_id){
-		  res.redirect('/chat');
-		  return;
+app.get('/',function(req, res) {
+	auth.loadUser(req,null,function(){
+		if (req.currentUser) {
+			res.redirect('/chat');
+			return;
 		}
-  }
-  res.render('user/login', {
-    locals: {
-      user: new User()
-    }
-  });
+		//*/
+		res.render('user/login', {
+			locals: {
+				user: new User()
+			}
+		});
+	});
 });
 
 // login route
 app.post('/', function(req, res) {
   User.findOne({ email: req.body.user.email }, function(err, user) {
     if (user && user.authenticate(req.body.user.password)) {
-      req.session.user_id = user.id;
-      
+      req.session.userid = user.id;
       if (req.body.remember_me) {
         var token = new LoginToken({ email: user.email });
           token.save(function() {
           res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-		  console.log('login',token,token.cookieValue)
 		  res.redirect('/chat');
+		  console.log('login',user,token,token.cookieValue)
         });
       }else{
 		  res.redirect('/chat');
@@ -40,6 +40,7 @@ app.post('/', function(req, res) {
 
 //logout user
 app.get('/logout', auth.loadUser, function(req, res) {
+  console.log('logout',req)
   if (req.session) {
     LoginToken.remove({ email: req.currentUser.email }, function() {});
     res.clearCookie('logintoken');
@@ -59,6 +60,7 @@ app.get('/register', function(req, res) {
 
 // create user route
 app.post('/register', function(req, res) {
+//	req.body.register.email = req.body.register.email +'@playcrab.com'
   User.findOne({ email: req.body.register.email }, function(err, user) {
     if (user) {
       // show error on username
@@ -96,7 +98,7 @@ app.post('/register', function(req, res) {
 
           nUser.save(function(err) {
             if (err) userSaveFailed();
-			req.session.user_id = nUser.id;
+			req.session.userid = nUser.id;
             req.flash('info', 'Registration successful');
 			
             res.redirect('/');

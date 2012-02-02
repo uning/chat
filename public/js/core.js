@@ -158,8 +158,8 @@
 							,touids: touids
 						};
 					}
-					//socket.send(JSON.stringify(jsonMsg));
-					socket.emit('message',jsonMsg);
+					socket.send(JSON.stringify(jsonMsg));
+					//socket.emit('message',jsonMsg);
 					message('me' ,msg)
 					this.value = '';
 				}

@@ -4,7 +4,7 @@ exports.helpers = {
   },
   
   appName: 'chat-server',
-  version: '0.1'
+  version: '0.01'
 };
 
 // flash message class
@@ -51,6 +51,6 @@ exports.dynamicHelpers = {
     return html;
   },
   isLoggedIn: function(req, res){
-      return (req.session.user_id);
+      return (req.currentUser);
   }
 };

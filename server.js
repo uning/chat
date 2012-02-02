@@ -46,6 +46,7 @@ sio.configure( function(){
 					callback(null, true);
 					handshakeData.username = handshakeData.query.name || 'user' + u 
 					uor.addUser(handshakeData.userid,handshakeData.username)
+
 					console.log('cid handshake ok',handshakeData.userid)
 				}else{
 					console.log('cid handshake error : no userid',handshakeData)
@@ -81,17 +82,18 @@ sio.configure( function(){
 		 */
 	 })
 });
+
 //configure server instance
 app.configure(function(){
-
-  app.set('connstring', 'mongodb://' + app.set('m_host') +':'+app.set('m_port') +'/' + app.set('m_database'));
+  var monconf = app.set('mongodb');
+  app.set('connstring', 'mongodb://' + monconf.host +':'+ monconf.port +'/' + monconf.db);
   app.set('views', __dirname + '/views');
   // set jade as default view engine
   app.set('view engine', 'jade');
+  //app.set('view engine', 'coffee');app.register('.coffee', require('coffeekup').adapters.express);
 
 
   // set stylus as css compile engine
-
   var compile = function(str, path) {
     return stylus(str)
       .set('filename', path)
@@ -103,11 +105,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.cookieParser());
   // use connect-mongo as session middleware
-  app.use(express.session({
-    secret: 'topsecret',
-    //store: new MongoStore({ db: app.set('m_database'), host: app.set('m_host'),port:app.set('m_port') })
-    store: new MongoStore(app.set('sessionMongo'))
-  }));
+  app.use(express.session({secret: 'topsecret',store: new MongoStore(app.set('mongodb'))}));
   app.use(express.methodOverride());
   app.use(app.router);
   // use express logger
@@ -126,8 +124,10 @@ models.defineModels(mongoose, function() {
 // require routes
 require('./routes/chat');
 require('./routes/user');
+require('./routes/help');
 
-if (!module.parent) {
+
+if ( !module.parent) {
   app.listen(app.set('port'));
   // TODO: implement cluster as soon as its stable
   /* cluster(app)

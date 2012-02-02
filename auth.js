@@ -1,4 +1,4 @@
-exports.AuthHelper = {
+exports.AuthHelper = AuthHelper = {
   /**
    * Authenticates a request using the login token
    * 
@@ -9,15 +9,15 @@ exports.AuthHelper = {
 	authFromLoginToken: function(req, res, next) {
 		var cookie = JSON.parse(req.cookies.logintoken);
 		LoginToken.findOne({ email: cookie.email, token: cookie.token }, function(err, token) {
-			console.log(__filename,err,token,cookie)
 			if (!token) {
-				res &&  res.redirect('/') || next()
+				res &&  res.redirect('/') || res || next() // for res.redirect not return res
 			}else{
 				User.findOne({ email: token.email }, function(err, user) {
 					if (user) {
-						req.session.user_id = user.id;
+						//console.log(__filename,err,user,user.id)
+						req.session = req.session || {};
+						req.session.user = user;
 						req.currentUser = user;
-
 						if(res){//更新token
 							//token.token = token.randomToken();//已经自动更新了
 							token.save(function(){
@@ -28,7 +28,7 @@ exports.AuthHelper = {
 							next();
 						}
 					} else {
-						res && res.redirect('/login') || next()
+						res && res.redirect('/login') || res || next()
 					}
 				});
 			}
@@ -47,20 +47,13 @@ exports.AuthHelper = {
 		if (app.set('disableAuthentication') === true){
 			next();
 		}else {
-			req.session = req.session || {};
-			if (req.session.user_id) {
-				User.findById(req.session.user_id, function(err, user) {
-					if (user) {
-						req.currentUser = user;
-						next();
-					} else {
-						res && res.redirect('/') || next()
-					}
-				});
+			if (req.session && req.session.user) {
+				req.currentUser = req.session.user
+				next();
 			} else if (req.cookies.logintoken) {
-				this.authFromLoginToken(req, res, next);
+				AuthHelper.authFromLoginToken(req, res, next);
 			} else {
-				res && res.redirect('/') || next();
+				res && res.redirect('/') || res || next();
 			}
 		}
 	}
