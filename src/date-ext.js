@@ -11,27 +11,28 @@ exports.toReadableDate = function(inputDate, formatType) {
   if (inputDate.constructor != (new Date).constructor)
     return '';
   
+  var year, month,day,hour,min,sec 
   switch (formatType) {
     case 'fullmonth':
-      var year = inputDate.getFullYear();
-      var month = monthNames[inputDate.getMonth()];
-      var day = inputDate.getDate();
+      year = inputDate.getFullYear();
+      month = monthNames[inputDate.getMonth()];
+      day = inputDate.getDate();
       return padDatePart(day) + '. ' + month + ' ' + year;
     case 'datestamp':
-      var month = inputDate.getMonth() + 1;
-      var day = inputDate.getDate();
-      var hour = inputDate.getHours();
-      var min = inputDate.getMinutes();
-      var sec = inputDate.getSeconds();
+      month = inputDate.getMonth() + 1;
+      day = inputDate.getDate();
+      hour = inputDate.getHours();
+      min = inputDate.getMinutes();
+      sec = inputDate.getSeconds();
       return padDatePart(day) + '.' +
         padDatePart(month) + ' @ ' +
         padDatePart(hour) + ':' +
         padDatePart(min) + ':' +
         padDatePart(sec);
     case 'timestamp':
-      var hour = inputDate.getHours();
-      var min = inputDate.getMinutes();
-      var sec = inputDate.getSeconds();
+      hour = inputDate.getHours();
+      min = inputDate.getMinutes();
+      sec = inputDate.getSeconds();
       return padDatePart(hour) + ':' +
         padDatePart(min) + ':' +
         padDatePart(sec);

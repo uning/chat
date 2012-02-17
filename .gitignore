@@ -4,5 +4,5 @@
 /nodemon-ignore
 *.sw*
 t
-t,*
+t.*
 *.out

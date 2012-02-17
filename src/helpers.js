@@ -51,6 +51,16 @@ exports.dynamicHelpers = {
     return html;
   },
   isLoggedIn: function(req, res){
-      return (req.currentUser);
+      return !!(req.currentUser);
   }
+  
+  /*
+  ,helpContent: function(req, res){
+    var markdown = require('markdown').markdown,fs = require('fs')
+	  var md = fs.readFileSync(app.set('views') + '/readme.md','utf-8')
+		return markdown.toHTML(md)
+  }
+  */
+
+
 };

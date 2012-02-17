@@ -21,4 +21,5 @@ fi
 
 
 #NODE_ENV=$env nohup  node $mydir/server.js  > t.log &
-NODE_ENV=$env   node $mydir/server.js  
+#NODE_ENV=$env   node  $mydir/server.js  
+NODE_ENV=$env supervisor -w $mydir/src $mydir/index.js  

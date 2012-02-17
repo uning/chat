@@ -13,11 +13,15 @@ html
   body
     #content
       !{flashMessages}
-      != body    
-      .logindiv(style='float:right')
+      #header.clear
+           h1(align='center')  聊天服务器
+      include nav
+           br
+      #logindiv
         - if (isLoggedIn)
            #{user.name}, 
            a.ui-button(href='/logout') Logout
         - else
            a.ui-button(href='/') Login
+      != body    
     script(type='text/javascript', src='/js/core.js')

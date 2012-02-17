@@ -3,7 +3,11 @@
 app.get('/',function(req, res) {
 	auth.loadUser(req,null,function(){
 		if (req.currentUser) {
-			res.redirect('/chat');
+      res.render('index', {
+        locals: {
+          user: req.currentUser
+        }
+      });
 			return;
 		}
 		//*/
@@ -22,15 +26,14 @@ app.post('/', function(req, res) {
       req.session.userid = user.id;
       if (req.body.remember_me) {
         var token = new LoginToken({ email: user.email });
-          token.save(function() {
+        token.save(function() {
           res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-		  res.redirect('/chat');
-		  console.log('login',user,token,token.cookieValue)
+          res.redirect('/');
+          log.info('login',user,token,token.cookieValue)
         });
       }else{
-		  res.redirect('/chat');
-	  }
-      
+        res.redirect('/');
+      }
     } else {
       req.flash('error', 'Login failed');
       res.redirect('/');
@@ -58,9 +61,19 @@ app.get('/register', function(req, res) {
   });
 });
 
+
 // create user route
 app.post('/register', function(req, res) {
-//	req.body.register.email = req.body.register.email +'@playcrab.com'
+   if(!Admins[req.body.register.email]){
+      req.flash('error', '该邮件地址限制注册，请使用@playcrab.com邮箱!');
+      res.render('user/register', {
+        locals: {
+          register: req.body.register
+        }
+      });
+	  return;
+   }
+
   User.findOne({ email: req.body.register.email }, function(err, user) {
     if (user) {
       // show error on username
@@ -100,7 +113,13 @@ app.post('/register', function(req, res) {
             if (err) userSaveFailed();
 			req.session.userid = nUser.id;
             req.flash('info', 'Registration successful');
-			
+			//
+			var token = new LoginToken({ email: user.email });
+			token.save(function() {
+				res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+				res.redirect('/');
+				log.info('login',user,token,token.cookieValue)
+			});
             res.redirect('/');
           });
         }

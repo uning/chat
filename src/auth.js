@@ -42,7 +42,7 @@ exports.AuthHelper = AuthHelper = {
    * @param express request
    * @param express response
    * @param express next function
-*/
+   */
 	loadUser: function(req, res, next) {
 		if (app.set('disableAuthentication') === true){
 			next();
