@@ -36,6 +36,7 @@ app.dynamicHelpers(require('./helpers.js').dynamicHelpers);
 require('./config');
 
 
+
 getRedisClient = function(rcc){
 	var rc = Redis.createClient(rcc.port  ,rcc.host)
 	rc.on("error", function (err) {

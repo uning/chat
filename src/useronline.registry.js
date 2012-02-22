@@ -20,13 +20,10 @@ ChatUser.prototype.init = function(){
 	User.findById(id,function(err,user){
 		if(user){
 			that.fids = user.fids || []
-			uname = uname || user.name 
-			uname = user.pinfo && user.pinfo.name
-			uname = uname || user.session && user.session.name
+			uname = uname || user.name ||  user.pinfo && user.pinfo.name || user.session && ( user.session.name || user.session.pid) 
 			if(uname){
 				user.n = uname
 			}
-
 			log.debug('init ChatUser ok',user)
 		}
 		else{
@@ -37,7 +34,7 @@ ChatUser.prototype.init = function(){
 }
 /**
  * 向redis 服务器注册
-*/
+ */
 ChatUser.prototype.login = function(){
 	rc.multi()
 	.sadd(app.set('host') + ':onlineusers',this.id)
@@ -62,7 +59,7 @@ ChatUser.prototype.tome = function(msg){
 	.lpush(mid,strmsg)
 	.llen(mid,function(err,res){
 		if(res > 10)
-			multi.rpob(mid)
+			multi.rpop(mid)
 	})
 	.exec(function(err,r){
 		if(err){
@@ -71,6 +68,14 @@ ChatUser.prototype.tome = function(msg){
 	});
 	if(this.socket)
 		this.socket.emit('message',msg)
+}
+
+/**
+ * 发送消息
+ * 存放到redis列表
+*/
+ChatUser.prototype.tofriend = function(msg){
+
 }
 
 
@@ -107,8 +112,12 @@ exports.UserOnlineRegistry = {
 	 * 清理断开的用户,默认半小时 
 	 */
 	clearTimeOutUser:function(t){
-		var to = t || 1800;
+		var to = t || 1800000,now = new Date().getTime();
+		for(id in this._currentUsers){
+		}
+		
 	},
+
 
 
   /**

@@ -165,7 +165,6 @@ sio.sockets.on('connection', function(socket) {
 		  }else{
 			  log.warn('no  ignore',user.id,m);
 		  }
-
 	}
   });
 

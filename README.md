@@ -1,9 +1,13 @@
-## node-chat -  游戏聊天服务器
+node-chat -  游戏聊天服务器
+----------------------------
+
       目前使用单服务器实现，支持群聊，一对一，一对多方式聊天
     使用socket.io实现,暂时没有实现多服务器通信功能
     提供js，flash,c++客户端
 
-## 系统设计
+系统设计
+---------------
+
 ### *聊天功能*
       socket.io作为协议底层，支持websocket，socket，jsonpolling
     json 数据传输格式,socket flash policy 文件在10843端口提供
@@ -69,7 +73,8 @@ client 发送
 <br/>
 
 
-## 客户端示例
+客户端示例
+----------
 
 * [js浏览器端](/socket.io/socket.io.js),使用 websocket 或者 flashsocket,[示例页面](/chat)
 
