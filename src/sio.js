@@ -105,13 +105,44 @@ sio.sockets.on('connection', function(socket) {
   log.info('connection:',user.n,user.id)
 
  //处理系统通知
- // socket.emit('login', { n: user.n,id:user.id});
+ // socket.broadcast.emit('login', { n: user.n,id:user.id});
+  user.login();//表示长连接成功
+ 
 
 
   //加载处理器
   //socket.emit('eventnme',param) 产生事件
   //socket.send(message) 产生message,可以为json object 或字符串
 
+  socket.on('online', function(m, c) {
+	  if( m && m.ids){
+		  var len = m.ids.length,om = {},id,u;
+		  for(var i = 0; i< len ;i++){
+			  id = m.ids[i];
+			  u = uor.getUser(id);
+			  if(u && u.socket){
+				  om[id] = 1;
+			  }else
+				  om[id] = 0;
+		  }
+		  socket.emit('online',om)
+	  }
+
+  });
+
+  //最近消息
+  socket.on('recentm', function(m, c) {
+       var user = socket.handshake.user;
+	   var callb = function(err,data){
+		   if(err){
+
+		   }
+		   else{
+			   socket.emit('recentm',{msgs:data})
+		   }
+	   }
+	   user.getRecentMsgs(callb)
+  });
 
   socket.on('message', function(m, c) {
     var user = socket.handshake.user;
@@ -152,18 +183,17 @@ sio.sockets.on('connection', function(socket) {
 		  var toids = msg.to,touser
 	      if('all' === toids){
 			  socket.broadcast.emit('message',omsg)
-		  }else if( 'string' === typeof toids ){
+		  }else if( typeof '1' === typeof toids || typeof 1 === typeof toids  ){
 			  touser = uor.getUser(toids);
-			  touser && touser.tome(omsg) || log.warn('to not find',user.id,toids)
+			  touser && touser.tome(omsg) || uor.offlineMsg(toids,omsg) 
 		  }else if(typeof toids == typeof []){
 			  var unum = toids.length
 			  for(var i = 0 ;i < unum ; i ++){
 				  touser = uor.getUser(toids[i]);
-				  touser && touser.tome(omsg) || log.warn('to not find',user.id,toids[i])
+				  touser && touser.tome(omsg) || uor.offlineMsg(toids[i],omsg);
 			  }
-		     
 		  }else{
-			  log.warn('no  ignore',user.id,m);
+			  log.warn('no `to` ignore',user.id,m);
 		  }
 	}
   });
@@ -174,6 +204,7 @@ sio.sockets.on('connection', function(socket) {
 	socket.broadcast.emit('offline',{userid:socket.handshake.user.id});
 	var user = socket.handshake.user;
 	user.s  = 2;// offline
+	user.socket = null;
   });
 
 

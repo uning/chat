@@ -43,7 +43,7 @@ ID =  module.exports ={
 		return uid;
 	}
 	,genCid:function(uid){
-		return ID.encInt(uid) + '_nn'
+		return ID.encInt(uid) + '_' + uid
 	}
 	,unserializePhp:function (data) {
 		// Takes a string representation of variable and recreates it  

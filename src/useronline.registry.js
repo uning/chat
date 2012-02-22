@@ -4,6 +4,7 @@
 
 ChatUser = function(){
 	this._t = new Date();
+	this._rmsgs = []
 }
 /**
  * 获取数据
@@ -24,7 +25,7 @@ ChatUser.prototype.init = function(){
 			if(uname){
 				user.n = uname
 			}
-			log.debug('init ChatUser ok',user)
+			//log.debug('init ChatUser ok',user)
 		}
 		else{
 			log.error('init ChatUser failed',id)
@@ -32,14 +33,36 @@ ChatUser.prototype.init = function(){
 	})
 
 }
+ChatUser.prototype.getRecentMsgs = function(callback){
+	var mid = 'msg:'+ this.id
+	rc.lrange(mid,0,-1,function(err,res){
+		log.debug(mid ,' recent msg from redis:',res,err);
+		if(err){
+			log.error('get recent messages failed ',err)
+			callback(err,data);
+		}else{
+			var rmsgs = [];
+			for(var i = 0; i < res.length || i > 20; i++ ){
+				rmsgs.push(json.parse(res[i]));
+			}
+			callback(null,rmsgs);
+		}
+	})
+}
 /**
  * 向redis 服务器注册
  */
 ChatUser.prototype.login = function(){
-	rc.multi()
+	var mid = 'msg:'+ this.id
+	,multi = rc.multi()
+	,a
+	,rmsgs = this._rmsgs
+	,i
+
+	multi
 	.sadd(app.set('host') + ':onlineusers',this.id)
 	.hset('user2server',this.id,app.set('host'))
-	.set('info:'+this.id,json.stringify(this))
+	.set('info:'+this.id,json.stringify({lastseen:this.lastseen,server: app.set('host'),systime:this.systime}))
 	.exec(function(err,r){
 		if(err){
 			log.error('ChatUser connect store error',err,r)
@@ -52,13 +75,22 @@ ChatUser.prototype.login = function(){
  * 存放到redis列表
 */
 ChatUser.prototype.tome = function(msg){
-	var strmsg = msg,mid = 'msg:'+ this.id,multi = rc.multi()
+	var strmsg = msg,rmsgs = this._rmsgs
+	if(this.socket){
+		this.socket.emit('message',msg)
+		rmsgs.push(msg);
+		if(rmsgs.length > 10){
+			rmsgs.pop();
+		}
+		return; //wether to save history
+	}
+	var mid = 'msg:'+ this.id,multi = rc.multi()
 	if('string' !== typeof msg)
 		strmsg = json.stringify(msg);
 	multi
 	.lpush(mid,strmsg)
 	.llen(mid,function(err,res){
-		if(res > 10)
+		if(res.length > 10)
 			multi.rpop(mid)
 	})
 	.exec(function(err,r){
@@ -66,16 +98,6 @@ ChatUser.prototype.tome = function(msg){
 			log.error('ChatUser connect store error',err,r)
 		}
 	});
-	if(this.socket)
-		this.socket.emit('message',msg)
-}
-
-/**
- * 发送消息
- * 存放到redis列表
-*/
-ChatUser.prototype.tofriend = function(msg){
-
 }
 
 
@@ -118,6 +140,16 @@ exports.UserOnlineRegistry = {
 		
 	},
 
+	/**
+	 * 离线消息存储
+	 */
+	 offlineMsg:function(touid,msg){
+		 var uo = new ChatUser();
+		 uo.id = touid;
+		 uo.tome(msg);
+		 log.warn('offlineMsg: to ',uid,' from ',msg._fid)
+
+	 },
 
 
   /**
@@ -183,4 +215,6 @@ exports.UserOnlineRegistry = {
 			this._currentUsers[groupid][userid] = 1;
 		}
 	}
+
+
 };

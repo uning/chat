@@ -51,7 +51,6 @@
 					  '</span>:<span class="message">&nbsp;' + msg + '</span>'
 					  +'<span class="date">[' + new Date() + ']'
 				);
-
 				//$('#chat-messages').append(elem);
 				elem.insertBefore($('#chat-messages li:first-child'));
 
@@ -111,6 +110,7 @@
 			});
 
 			
+
 
 			// bind input event
 			$('.chat-message').bind('keydown', function(e) {

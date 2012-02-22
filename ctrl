@@ -19,6 +19,12 @@ if [ "$1" == "1" ] ; then
 	env='production'
 fi
 
+if [ "$1" == "stop" ] ; then
+	killall node;
+	echo "kill all node process"
+	exit 0;
+fi
+
 
 export NODE_ENV=$env
 #NODE_ENV=$env nohup  node $mydir/server.js  > t.log &

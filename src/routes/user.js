@@ -114,7 +114,7 @@ app.post('/register', function(req, res) {
 			req.session.userid = nUser.id;
             req.flash('info', 'Registration successful');
 			//
-			var token = new LoginToken({ email: user.email });
+			var token = new LoginToken({ email: nUser.email });
 			token.save(function() {
 				res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
 				res.redirect('/');
