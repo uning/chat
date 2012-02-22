@@ -105,7 +105,7 @@ sio.sockets.on('connection', function(socket) {
   log.info('connection:',user.n,user.id)
 
  //处理系统通知
-  socket.emit('login', { n: user.n,id:user.id});
+ // socket.emit('login', { n: user.n,id:user.id});
 
 
   //加载处理器
