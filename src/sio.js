@@ -47,7 +47,7 @@ sio.configure( function(){
 					callback(null, true);
 					uname = handshakeData.query.name || 'user' + u 
 					handshakeData.user = uor.addUser(u,uname)
-					log.info('cid handshake ok',handshakeData.user.id)
+					log.debug('cid handshake ok',handshakeData.user.id)
 				}else{
 					log.warn('cid handshake error : no userid',handshakeData)
 				}
@@ -58,7 +58,7 @@ sio.configure( function(){
 						callback(null, true);
 						uname = handshakeData.currentUser.name || handshakeData.currentUser.email
 						handshakeData.user = uor.addUser(u,uname)
-						log.info('cookie handshake ok ',handshakeData.user.id)
+						log.debug('cookie handshake ok ',handshakeData.user.id)
 					}else{
 						callback(null, false);
 						log.warn('cookie handshake error : no userid',handshakeData)

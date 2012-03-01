@@ -46,7 +46,7 @@ getRedisClient = function(rcc){
 		log.info("Redis end:",rcc , err);
 	})
 	rc.on('ready',function(err){
-		log.info("Redis ready:",rcc , err);
+		log.debug("Redis ready:",rcc , err);
 	})
 	return rc;
 }
