@@ -14,19 +14,41 @@
 
 mydir=$(dirname $0)
 
+
+pidf=$mydir/run.pid
+logf=$mydir/run.log
+
 env='development'
-if [ "$1" == "1" ] ; then
+if [ "$2" == "1" ] ; then
 	env='production'
 fi
 
-if [ "$1" == "stop" ] ; then
-	killall node;
-	echo "kill all node process"
-	exit 0;
-fi
-
-
 export NODE_ENV=$env
+
+case "$1" in
+start)
+  echo 'Start chat ...'
+  nohup  supervisor -n exit -w $mydir/src -- $mydir/index.js -p $pidf  >$logf &
+  sleep 1
+  tail $logf
+  ;;
+stop)
+  pid=$(cat $pidf)
+  echo "Stop chat  $pid process"
+  kill  $pid
+  sleep 0.1
+  tail $logf
+  ;;
+restart)
+  stop
+  start
+  ;;
+*)
+  printf 'Usage: %s {start|stop|restart|hup}\n' "$prog"
+  exit 1
+  ;;
+esac
+
+
 #NODE_ENV=$env nohup  node $mydir/server.js  > t.log &
 #NODE_ENV=$env   node  $mydir/server.js  
-nohup  supervisor -w $mydir/src $mydir/index.js  >$mydir/run.log &
