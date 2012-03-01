@@ -19,7 +19,9 @@ fs.writeFile( pidfile, process.pid, function (err) {
 });
 
 process.on('uncaughtException', function (err) {
+
   log.error('Caught exception: ' + err);
+  console.trace();
 });
 
 process.on('exit',function(){

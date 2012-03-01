@@ -35,15 +35,18 @@ ChatUser.prototype.init = function(){
 }
 ChatUser.prototype.getRecentMsgs = function(callback){
 	var mid = 'msg:'+ this.id
+	var old = new Date().getTime() - 86400*1000*1;
 	rc.lrange(mid,0,-1,function(err,res){
 		log.debug(mid ,' recent msg from redis:',res,err);
 		if(err){
 			log.error('get recent messages failed ',err)
 			callback(err,data);
 		}else{
-			var rmsgs = [];
+			var rmsgs = [],mo
 			for(var i = 0; i < res.length || i > 20; i++ ){
-				rmsgs.push(json.parse(res[i]));
+				mo = json.parse(res[i]);
+				if(mo._t  > old)
+				rmsgs.push(mo);
 			}
 			callback(null,rmsgs);
 		}
