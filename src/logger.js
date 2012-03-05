@@ -98,6 +98,7 @@ levels.forEach(function (name,k) {
       this.log.apply(this,arguments);
   };
 });
+Logger.prototype['puts'] = Logger.prototype['info'];
 
 levels.forEach(function (name,k) {
  padlevels.push(name + new Array(max - name.length + 1).join(' '));

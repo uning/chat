@@ -119,3 +119,4 @@ app.run = function(){
 if (!module.parent) {
 	app.run();
 }
+console.log(module.parent);
