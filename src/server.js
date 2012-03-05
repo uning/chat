@@ -9,6 +9,7 @@ express = require('express'),
   Redis = require("redis"),
   models = require('./models'),
   ID = require('./id')
+  log = require('./logger').getLogger()
 
   Admins = require('./adminusers')
 
@@ -100,16 +101,21 @@ require('./routes/admin');
 
 
 require('./sio');
-log = sio.log;
+sio.log = log;
 rc = getRedisClient(app.set('confserver'))
 
-if (!module.parent) {
+app.run = function(){
 	app.listen(app.set('port'));
-
+	setInterval(uor.clearTimeOutUser,app.set('clearTimeOutUser'));
+	console.log('clearTimeOutUser',app.set('clearTimeOutUser'),'env',process.env['NODE_ENV'])
 	// TODO: implement cluster as soon as its stable
   /* cluster(app)
 	.set('workers', 2)
 	.use(cluster.debug())
 	.listen(app.set('port'));*/
    log.info("Chat app server listening on port %d", app.address().port);
+}
+
+if (!module.parent) {
+	app.run();
 }

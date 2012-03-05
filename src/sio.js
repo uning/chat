@@ -1,4 +1,5 @@
 
+
 sio = require('socket.io').listen(app);
 //confiure socket io
 //https://github.com/LearnBoost/Socket.IO/wiki/Configuring-Socket.IO
@@ -182,11 +183,12 @@ sio.sockets.on('connection', function(socket) {
 	  default: //玩家一对一或1对多聊天
 		  var toids = msg.to,touser
 	      if('all' === toids){
+			  omsg.t = 1;
 			  socket.broadcast.emit('message',omsg)
 		  }else if( typeof '1' === typeof toids || typeof 1 === typeof toids  ){
 			  touser = uor.getUser(toids);
 			  touser && touser.tome(omsg) || uor.offlineMsg(toids,omsg) 
-		  }else if(typeof toids == typeof []){
+		  }else if(typeof toids === typeof []){
 			  var unum = toids.length
 			  for(var i = 0 ;i < unum ; i ++){
 				  touser = uor.getUser(toids[i]);

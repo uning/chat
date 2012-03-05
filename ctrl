@@ -23,30 +23,47 @@ if [ "$2" == "1" ] ; then
 	env='production'
 fi
 
+usage(){
+echo <<HELP
+ ctrl prog of chat 
+ Usage: $0 {start|stop|restart} [1]
+  1 in production mode
+HELP
+}
+
 export NODE_ENV=$env
 
 case "$1" in
-start)
-  echo 'Start chat ...'
-  nohup  supervisor -n exit -w $mydir/src -- $mydir/index.js -p $pidf  >$logf &
-  sleep 1
-  tail $logf
-  ;;
-stop)
-  pid=$(cat $pidf)
-  echo "Stop chat  $pid process"
-  kill  $pid
-  sleep 0.1
-  tail $logf
-  ;;
-restart)
-  stop
-  start
-  ;;
-*)
-  printf 'Usage: %s {start|stop|restart|hup}\n' "$prog"
-  exit 1
-  ;;
+	start)
+		if [  -f $pidf ] ; then  
+			pid=$(cat $pidf)
+			echo "chat is running  $pid process"
+		else
+			echo 'Start chat ...'
+			nohup  supervisor -n exit -w $mydir/src -- $mydir/index.js -p $pidf  >$logf &
+			sleep 1
+			tail $logf
+		fi
+		;;
+	stop)
+		if [ ! -f $pidf ] ; then  
+			echo pidfile not exists
+		else
+			pid=$(cat $pidf)
+			echo "Stop chat  $pid process"
+			kill  $pid
+			sleep 0.1
+			tail $logf
+		fi
+		;;
+	restart)
+		stop
+		start
+		;;
+	*)
+		printf 'Usage: %s {start|stop|restart|hup}\n' "$prog"
+		exit 1
+		;;
 esac
 
 

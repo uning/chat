@@ -137,9 +137,17 @@ exports.UserOnlineRegistry = {
 	 * 清理断开的用户,默认半小时 
 	 */
 	clearTimeOutUser:function(t){
-		var to = t || 1800000,now = new Date().getTime();
+		log.info('do clearTimeOutUser ...');
+		var to = t || 1800000,now = new Date().getTime(),u
 		for(id in this._currentUsers){
+			u = this._currentUsers[id]
+			if(u.lastseen.getTime() + to < now && u.socket == null ){
+				delete  this._currentUsers[userid];
+				log.debug('clearTimeOutUser:',u)
+			}
+		
 		}
+		log.info('do clearTimeOutUser end');
 		
 	},
 
@@ -219,5 +227,5 @@ exports.UserOnlineRegistry = {
 		}
 	}
 
-
 };
+

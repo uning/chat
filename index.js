@@ -1,9 +1,7 @@
 
 require ('./src/server')
 var fs = require('fs')
-
-app.listen(app.set('port'));
-log.info("Chat app server listening on port", app.set('port'));
+app.run();
 
 var pidfile = process.cwd() + '/chat.pid'
 process.argv.forEach(function (val, index, array) {
